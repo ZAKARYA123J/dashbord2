@@ -73,11 +73,10 @@ export function CustomersTable({
                   }}
                 />
               </TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Signed Up</TableCell>
+              <TableCell>TITLE</TableCell>
+              <TableCell>Prix</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,7 +99,7 @@ export function CustomersTable({
                   </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
+                      {/* <Avatar src={row.avatar} /> */}
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
@@ -108,8 +107,8 @@ export function CustomersTable({
                   <TableCell>
                     {row.address.city}, {row.address.state}, {row.address.country}
                   </TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
+                  {/* <TableCell>{row.phone}</TableCell>
+                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell> */}
                 </TableRow>
               );
             })}

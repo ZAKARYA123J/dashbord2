@@ -21,11 +21,11 @@ export function TotalProfit({ value, sx }: TotalProfitProps): React.JSX.Element 
             <Typography color="text.secondary" variant="overline">
               Total Profit
             </Typography>
-            <Typography variant="h4">{value}</Typography>
+            <Typography variant="h4">Rented</Typography>
           </Stack>
-          <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
+          {/* <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '54px', width: '54px' }}>
             <ReceiptIcon fontSize="var(--icon-fontSize-lg)" />
-          </Avatar>
+          </Avatar> */}
         </Stack>
       </CardContent>
     </Card>

@@ -23,11 +23,11 @@ export function TasksProgress({ value, sx }: TasksProgressProps): React.JSX.Elem
               <Typography color="text.secondary" gutterBottom variant="overline">
                 Task Progress
               </Typography>
-              <Typography variant="h4">{value}%</Typography>
+              <Typography variant="h4">Status</Typography>
             </Stack>
-            <Avatar sx={{ backgroundColor: 'var(--mui-palette-warning-main)', height: '56px', width: '56px' }}>
+            {/* <Avatar sx={{ backgroundColor: 'var(--mui-palette-warning-main)', height: '56px', width: '56px' }}>
               <ListBulletsIcon fontSize="var(--icon-fontSize-lg)" />
-            </Avatar>
+            </Avatar> */}
           </Stack>
           <div>
             <LinearProgress value={value} variant="determinate" />

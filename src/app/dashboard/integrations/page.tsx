@@ -1,3 +1,4 @@
+"use client"
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Box from '@mui/material/Box';
@@ -10,15 +11,22 @@ import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Downloa
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import dayjs from 'dayjs';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
 
 import { config } from '@/config';
 import { IntegrationCard } from '@/components/dashboard/integrations/integrations-card';
 import type { Integration } from '@/components/dashboard/integrations/integrations-card';
 import { CompaniesFilters } from '@/components/dashboard/integrations/integrations-filters';
 
-export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
+// export const metadata: Metadata = {
+//   title: `Integrations | Dashboard | ${config.site.name}`,
+// };
 
-const integrations = [
+const integrations: Integration[] = [
   {
     id: 'INTEG-006',
     title: 'Dropbox',
@@ -67,11 +75,81 @@ const integrations = [
     installs: 435,
     updatedAt: dayjs().subtract(25, 'minute').subtract(6, 'hour').subtract(6, 'day').toDate(),
   },
-] satisfies Integration[];
+];
 
-export default function Page(): React.JSX.Element {
+export default function Page(): React.ReactElement {
+  const [open, setOpen] = React.useState(false);
+  const [newCustomer, setNewCustomer] = React.useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+  });
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewCustomer({
+      ...newCustomer,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSave = () => {
+    // Logic to save the new customer can go here
+    handleClose();
+  };
+
   return (
     <Stack spacing={3}>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add New Customer</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Name"
+            name="name"
+            fullWidth
+            variant="outlined"
+            value={newCustomer.name}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            label="Email"
+            name="email"
+            fullWidth
+            variant="outlined"
+            value={newCustomer.email}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            label="Phone"
+            name="phone"
+            fullWidth
+            variant="outlined"
+            value={newCustomer.phone}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            label="Address"
+            name="address"
+            fullWidth
+            variant="outlined"
+            value={newCustomer.address}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSave} variant="contained">Save</Button>
+        </DialogActions>
+      </Dialog>
+
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Integrations</Typography>
@@ -85,7 +163,7 @@ export default function Page(): React.JSX.Element {
           </Stack>
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
             Add
           </Button>
         </div>
