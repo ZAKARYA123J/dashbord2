@@ -24,7 +24,7 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://a6b0-196-115-75-116.ngrok-free.app/api/login', {
+      const response = await axios.post('https://b7bf-196-115-75-116.ngrok-free.app/api/login', {
         email,
         password,
       });
@@ -95,4 +95,4 @@ const Login: React.FC = () => {
   );
 }
 
-export default Login;
+export default Login;

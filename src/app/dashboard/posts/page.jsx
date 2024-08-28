@@ -11,36 +11,19 @@ const DataTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/users', {
-          // mode: 'no-cors' // This mode does not include the CORS headers in the request.
-        });
-        
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        // Since `no-cors` mode restricts you from accessing the response content,
-        // you can't directly access `response.json()` or `response.text()` here.
-  
-        // Assuming you want to handle this gracefully:
-        const responseData = await response.json(); // Parse the response into JSON
-        setData(responseData);
-        console.log(responseData)
-        console.log('API Request was successful');
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchData();
-  }, []);
-  
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('https://f477-196-115-75-116.ngrok-free.app/api/posts');
+      setData(response.data);
+      console.log('API Request was successful', response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError(`Error fetching data: ${error.response ? error.response.data : error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData()
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -72,16 +55,16 @@ const DataTable = () => {
         <TableBody>
           {Array.isArray(data) && data.length > 0 ? (
             data.map((row) => (
-              <TableRow key={row._id}>
-                <TableCell>{row.nom}</TableCell>
-                {/* <TableCell>{row.address}</TableCell> */}
-                {/* <TableCell>{row.category?.name || 'N/A'}</TableCell> */}
-                {/* <TableCell>{getStatusIcon(row.status)}</TableCell> */}
+              <TableRow key={row.id}>
+                <TableCell>{row.title}</TableCell>
+                <TableCell>{row.adress}</TableCell>
+                <TableCell>{row.category?.name || 'N/A'}</TableCell>
+                <TableCell>{getStatusIcon(row.status)}</TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5}>No data available</TableCell>
+              <TableCell colSpan={4}>No data available</TableCell>
             </TableRow>
           )}
         </TableBody>
