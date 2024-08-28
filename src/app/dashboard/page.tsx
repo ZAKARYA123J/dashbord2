@@ -11,7 +11,7 @@ import { Sales } from '@/components/dashboard/overview/sales';
 import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
 import { TotalCustomers } from '@/components/dashboard/overview/total-customers';
 import { TotalProfit } from '@/components/dashboard/overview/total-profit';
-import { Traffic } from '@/components/dashboard/overview/traffic';
+// import { Traffic } from '@/components/dashboard/overview/traffic';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -30,7 +30,7 @@ export default function Page(): React.JSX.Element {
       <Grid lg={3} sm={6} xs={12}>
         <TotalProfit sx={{ height: '100%' }} value="$15k" />
       </Grid>
-      <Grid lg={8} xs={12}>
+      <Grid lg={12} xs={12}>
         <Sales
           chartSeries={[
             { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
@@ -39,9 +39,9 @@ export default function Page(): React.JSX.Element {
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
+      {/* <Grid lg={4} md={6} xs={12}>
         <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-      </Grid>
+      </Grid> */}
       {/* <Grid lg={4} md={6} xs={12}>
         <LatestProducts
           products={[

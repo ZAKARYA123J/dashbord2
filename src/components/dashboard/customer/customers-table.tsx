@@ -4,7 +4,6 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -14,7 +13,6 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
 
@@ -22,20 +20,53 @@ function noop(): void {
   // do nothing
 }
 
-export interface Customer {
+export interface Posts {
   id: string;
-  avatar: string;
-  name: string;
-  email: string;
-  address: { city: string; state: string; country: string; street: string };
-  phone: string;
-  createdAt: Date;
+  img: string[];
+  datePost: Date;
+  lat: number;
+  lon: number;
+  prix: number;
+  adress: string;
+  ville: string;
+  status: string;
+  title: string;
+  categoryId: number;
+  typeId: number;
+  category: {
+    id: number;
+    name: string;
+  };
+  type: {
+    id: number;
+    type: string;
+  };
+  Detail: {
+    id: number;
+    constructionyear: string;
+    surface: string;
+    rooms: string;
+    bedromms: string;
+    livingrooms: string;
+    kitchen: string;
+    bathrooms: string;
+    furnished: string;
+    floor: string;
+    elevator: string;
+    parking: string;
+    balcony: string;
+    pool: string;
+    facade: string;
+    documents: string;
+    postId: number;
+  };
+  DateReserve: any[];
 }
 
 interface CustomersTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Posts[];
   rowsPerPage?: number;
 }
 
@@ -46,7 +77,7 @@ export function CustomersTable({
   rowsPerPage = 0,
 }: CustomersTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    return rows.map((post) => post.id.toString());
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -60,55 +91,36 @@ export function CustomersTable({
         <Table sx={{ minWidth: '800px' }}>
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedAll}
-                  indeterminate={selectedSome}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      selectAll();
-                    } else {
-                      deselectAll();
-                    }
-                  }}
-                />
-              </TableCell>
-              <TableCell>TITLE</TableCell>
+              <TableCell>Title</TableCell>
               <TableCell>Prix</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Ville</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => {
-              const isSelected = selected?.has(row.id);
+              const isSelected = selected?.has(row.id.toString());
 
               return (
                 <TableRow hover key={row.id} selected={isSelected}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={isSelected}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          selectOne(row.id);
-                        } else {
-                          deselectOne(row.id);
-                        }
-                      }}
-                    />
-                  </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      {/* <Avatar src={row.avatar} /> */}
-                      <Typography variant="subtitle2">{row.name}</Typography>
+                      {row.img.length > 0 && <Avatar src={row.img[0]} alt={row.title} />}
+                      <Typography variant="subtitle2">{row.title}</Typography>
                     </Stack>
                   </TableCell>
-                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.prix}</TableCell>
+                  <TableCell>{row.status}</TableCell>
+                  <TableCell>{row.category.name}</TableCell>
+                  <TableCell>{row.type.type}</TableCell>
+                  <TableCell>{row.ville}</TableCell>
                   <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
+                    {/* Add any action buttons or links here */}
+                    <button>View</button>
                   </TableCell>
-                  {/* <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell> */}
                 </TableRow>
               );
             })}

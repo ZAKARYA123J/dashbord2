@@ -40,7 +40,7 @@ export function LatestOrders({ orders = [], sx }: LatestOrdersProps): React.JSX.
       <CardHeader title="Latest orders" />
       <Divider />
       <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 800 }}>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Order</TableCell>
