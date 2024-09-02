@@ -1,218 +1,239 @@
-'use client'
+"use client";
 import React, { useState } from 'react';
-import { TextField, Button, MenuItem, Grid, Box, Typography } from '@mui/material';
 import axios from 'axios';
+import { TextField, Button, Container, Grid, Typography } from '@mui/material';
 
-const PostForm = () => {
-  const [post, setPost] = useState({
-    img: [],
-    datePost: '',
+const InsertDataComponent = () => {
+  const [data, setData] = useState({
+    img: ["https://example.com/image1.jpg"], // Handle image URLs/identifiers
+    datePost: "2006-08-22",
     lat: '',
     lon: '',
     prix: '',
     adress: '',
     ville: '',
-    status: '',
+    status: 'available',
     title: '',
     categoryId: '',
-    typeId: '',
+    typeId: ''
   });
 
-  const statuses = ['Draft', 'Published', 'Archived'];
-  const categories = [{ id: 1, name: 'Category 1' }, { id: 2, name: 'Category 2' }];
-  const types = [{ id: 1, name: 'Type 1' }, { id: 2, name: 'Type 2' }];
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadStatus, setUploadStatus] = useState('');
+
+  const handleFileChange = (event) => {
+    setSelectedFiles(event.target.files);
+  };
 
   const handleChange = (e) => {
-    setPost({ ...post, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setData({
+      ...data,
+      [name]: value
+    });
   };
 
-  const handleFileChange = (e) => {
-    setPost({ ...post, img: Array.from(e.target.files) });
-  };
-
-  const handleSubmit = async () => {
+  const uploadImages = async () => {
+    const formData = new FormData();
+    for (const file of selectedFiles) {
+      formData.append('img', file);
+    }
+    
     try {
-      const formData = new FormData();
-      Object.keys(post).forEach(key => {
-        if (key === 'img') {
-          post[key].forEach(file => formData.append('img', file));
-        } else {
-          formData.append(key, post[key]);
-        }
-      });
-
-      const response = await axios.post('/api/posts', formData, {
+      const response = await axios.post('http://localhost:3001/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      console.log(response.data);
+      // Assuming response contains an array of image URLs or identifiers
+      return response.data.imageUrls; // Modify according to your server response
     } catch (error) {
-      console.error('Error submitting form', error);
+      console.error('Error uploading images:', error);
+      setUploadStatus(`Image upload failed: ${error.message}`);
+      return [];
+    }
+  };
+
+  const insertData = async () => {
+    if (!data.title || !data.adress || !data.ville || !data.lat || !data.lon || !data.prix || !data.categoryId || !data.typeId) {
+      setUploadStatus('Please fill out all required fields.');
+      return;
+    }
+
+    setUploadStatus('Uploading images...');
+    const imageUrls = await uploadImages();
+
+    // Update data with image URLs
+    const payload = {
+      ...data,
+      img: imageUrls
+    };
+
+    try {
+      setUploadStatus('Inserting data...');
+      const response = await axios.post('http://localhost:3001/api/posts', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Response data:', response.data);
+      setUploadStatus(`Upload successful: ${response.data.message}`);
+      // Reset form
+      setData({
+        img: ["https://example.com/image1.jpg"],
+        datePost: "2006-08-22",
+        lat: '',
+        lon: '',
+        prix: '',
+        adress: '',
+        ville: '',
+        status: 'available',
+        title: '',
+        categoryId: '',
+        typeId: ''
+      });
+      setSelectedFiles([]);
+    } catch (error) {
+      console.error('Error inserting data:', error);
+      setUploadStatus(`Upload failed: ${error.message}`);
     }
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>Create/Edit Post</Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+    <Container>
+      <Typography variant="h4" gutterBottom>
+        Insert Data
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             label="Title"
             name="title"
-            value={post.title}
+            value={data.title}
             onChange={handleChange}
-            required
+            variant="outlined"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             label="Address"
             name="adress"
-            value={post.adress}
+            value={data.adress}
             onChange={handleChange}
-            required
+            variant="outlined"
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             label="City"
             name="ville"
-            value={post.ville}
+            value={data.ville}
             onChange={handleChange}
-            required
+            variant="outlined"
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Price"
-            name="prix"
-            value={post.prix}
+            label="Date Post"
+            name="datePost"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={data.datePost}
             onChange={handleChange}
-            type="number"
-            required
+            variant="outlined"
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             label="Latitude"
             name="lat"
-            value={post.lat}
-            onChange={handleChange}
             type="number"
-            required
+            value={data.lat}
+            onChange={handleChange}
+            variant="outlined"
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             label="Longitude"
             name="lon"
-            value={post.lon}
-            onChange={handleChange}
             type="number"
-            required
+            value={data.lon}
+            onChange={handleChange}
+            variant="outlined"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
+          <TextField
+            fullWidth
+            label="Price"
+            name="prix"
+            type="number"
+            value={data.prix}
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             label="Status"
             name="status"
-            value={post.status}
+            value={data.status}
             onChange={handleChange}
-            select
-            required
-          >
-            {statuses.map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </TextField>
+            variant="outlined"
+          />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Category"
+            label="Category ID"
             name="categoryId"
-            value={post.categoryId}
+            type="number"
+            value={data.categoryId}
             onChange={handleChange}
-            select
-            required
-          >
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            variant="outlined"
+          />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Type"
+            label="Type ID"
             name="typeId"
-            value={post.typeId}
+            type="number"
+            value={data.typeId}
             onChange={handleChange}
-            select
-            required
-          >
-            {types.map((type) => (
-              <MenuItem key={type.id} value={type.id}>
-                {type.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Date Posted"
-            name="datePost"
-            type="date"
-            value={post.datePost}
-            onChange={handleChange}
-            required
-            InputLabelProps={{
-              shrink: true,
-            }}
+            variant="outlined"
           />
         </Grid>
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            component="label"
-            fullWidth
-          >
-            Upload Images
-            <input
-              type="file"
-              multiple
-              hidden
-              onChange={handleFileChange}
-            />
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            fullWidth
-          >
-            Submit
-          </Button>
+          <input
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            style={{ marginTop: '16px' }}
+          />
         </Grid>
       </Grid>
-    </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={insertData}
+        style={{ marginTop: '16px' }}
+      >
+        Insert Data
+      </Button>
+      <Typography variant="body1" style={{ marginTop: '16px' }}>
+        {uploadStatus}
+      </Typography>
+    </Container>
   );
 };
 
-export default PostForm;
+export default InsertDataComponent;

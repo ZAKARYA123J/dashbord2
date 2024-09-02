@@ -71,6 +71,6 @@
     "prettier": "3.3.2",
     "typescript": "5.5.2"
   },
-  "proxy": "https://d2cd-196-115-75-116.ngrok-free.app"
+  "proxy": "http://localhost:3001/api"
 
 }

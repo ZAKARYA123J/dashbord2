@@ -27,7 +27,7 @@ export function Budget({ diff, trend, sx, value }: BudgetProps): React.JSX.Eleme
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
               <Typography color="text.secondary" variant="overline">
-                Budget
+              Total posts
               </Typography>
               <Typography variant="h4">Total</Typography>
             </Stack>
@@ -35,7 +35,7 @@ export function Budget({ diff, trend, sx, value }: BudgetProps): React.JSX.Eleme
               <CurrencyDollarIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar> */}
           </Stack>
-          {diff ? (
+          {/* {diff ? (
             <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
               <Stack sx={{ alignItems: 'center' }} direction="row" spacing={0.5}>
                 <TrendIcon color={trendColor} fontSize="var(--icon-fontSize-md)" />
@@ -47,7 +47,7 @@ export function Budget({ diff, trend, sx, value }: BudgetProps): React.JSX.Eleme
                 Since last month
               </Typography>
             </Stack>
-          ) : null}
+          ) : null} */}
         </Stack>
       </CardContent>
     </Card>

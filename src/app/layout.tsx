@@ -8,19 +8,18 @@ import { LocalizationProvider } from '@/components/core/localization-provider';
 import { ThemeProvider } from '@/components/core/theme-provider/theme-provider';
 
 export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
-
+import {DataProvider} from '.././contexts/post'
 interface LayoutProps {
   children: React.ReactNode;
 }
-
 export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
     <html lang="en">
       <body>
         <LocalizationProvider>
-          {/* <UserProvider> */}
+          <DataProvider>
             <ThemeProvider>{children}</ThemeProvider>
-          {/* </UserProvider> */}
+           </DataProvider> 
         </LocalizationProvider>
       </body>
     </html>

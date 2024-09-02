@@ -3,7 +3,7 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
+        source: '/Index',
         destination: '/login',
         permanent: true,
       },
@@ -13,10 +13,11 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://b7bf-196-115-75-116.ngrok-free.app/api/login/:path*',
+        destination: process.env.API_URL + '/api/:path*',
       },
     ];
   },
+
 };
 
 export default nextConfig;
