@@ -1,6 +1,10 @@
 "use client";
 import React, { useContext, useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton } from '@mui/material';
+import { 
+  Table, TableBody, TableCell, TableContainer, 
+  TableHead, TableRow, Paper, Button, IconButton,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle 
+} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -12,52 +16,56 @@ import Link from 'next/link';
 import { DataContext } from '@/contexts/post';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { MdAddCard } from "react-icons/md";
+import { IoIosAddCircleOutline } from "react-icons/io";
 const DataTable = () => {
   const { data, loading, error } = useContext(DataContext);
-  const router = useRouter();  // Initialize useRouter safely
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
-    setMounted(true);  // Only set mounted to true after the component mounts
+    setMounted(true);
   }, []);
 
-  if (!mounted) return null;  // Prevents router usage on the server-side
+  if (!mounted) return null;
 
-  const handleDelete = async (id) => {
+  const handleClickOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedId(null);
+  };
+
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/posts/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/posts/${selectedId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          // Include authentication headers if needed
-          // 'Authorization': `Bearer ${token}`,
         },
-     
       });
-        const data=await response.json()
-        console.log(data)
-     
+      
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
   
       console.log('Delete successful');
-      // Optionally, you can refresh the item list or update the UI here
-      // For example, you could re-fetch the data from the server
-      // or remove the deleted item from the local state.
-      // To remove from local state, you need to manage the data state in the component.
-      setData(data.filter(item => item.id !== id));
+      // Update the UI after deletion
+      setData((prevData) => prevData.filter(item => item.id !== selectedId));
+      handleClose(); // Close the dialog after deletion
   
     } catch (error) {
       console.error('Failed to delete item:', error);
-      // Optionally show an error message to the user
     }
   };
-  
-  
 
   const handleUpdate = (id) => {
-    router.push(`/dashboard/update/${id}`);  // Use router.push to navigate
+    router.push(`/dashboard/update/${id}`);
   };
 
   const handleDetail = (id) => {
@@ -98,8 +106,11 @@ const DataTable = () => {
   return (
     <>
       <div style={{ textAlign: 'right', marginBottom: "10px" }}>
+      {/* <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
+            Add
+          </Button> */}
         <Link href="/dashboard/insert" passHref>
-          <Button variant="outlined">Add <FaPlus style={{ marginLeft: "2px" }} /></Button>
+          <Button variant="contained">Add <FaPlus style={{ marginLeft: "2px" }} /></Button>
         </Link>
       </div>
       <TableContainer component={Paper}>
@@ -111,7 +122,8 @@ const DataTable = () => {
               <TableCell>City</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>Orders</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -123,6 +135,7 @@ const DataTable = () => {
                   <TableCell>{row.ville}</TableCell>
                   <TableCell>{row.category?.name || 'N/A'}</TableCell>
                   <TableCell>{getStatusIcon(row.status)}</TableCell>
+                  <TableCell  style={{color:'#1e90ff'}}><MdAddCard fontSize={25}/></TableCell>
                   <TableCell >
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <IconButton onClick={() => handleDetail(row.id)}>
@@ -131,7 +144,7 @@ const DataTable = () => {
                       <IconButton onClick={() => handleUpdate(row.id)} color="primary">
                         <EditIcon />
                       </IconButton>
-                      <IconButton onClick={() => handleDelete(row.id)} style={{ color: "red" }}>
+                      <IconButton onClick={() => handleClickOpen(row.id)} style={{ color: "red" }}>
                         <DeleteIcon />
                       </IconButton>
                     </div>
@@ -146,6 +159,28 @@ const DataTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this item? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="secondary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

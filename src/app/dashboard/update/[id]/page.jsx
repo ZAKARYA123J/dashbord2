@@ -7,9 +7,8 @@ import { Button, TextField, Container, Typography } from '@mui/material';
 const UpdatePage = () => {
 
   const { id } = useParams(); // Get the dynamic id from the URL
-  const [formData, setFormData] = useState({ title: '', address: '', city: '', category: '', status: '' });
+  const [formData, setFormData] = useState({ img:'',title: '', adress: '', ville: '', category: '', status: '' ,lat:'',lon:'',prix:'',category:'',type:''});
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (id) {
       fetch(`http://localhost:3001/api/posts/${id}`)
@@ -22,10 +21,14 @@ const UpdatePage = () => {
         .then(data => {
           setFormData({
             title: data.title,
-            address: data.address,
-            city: data.city,
+            adress: data.adress,
+            ville: data.ville,
             category: data.category.name, // Assuming the category is an object
             status: data.status,
+            lat:data.lat,
+            lon:data.lon,
+            prix:data.prix,
+            type:data.type.type
           });
           setLoading(false);
         })
@@ -47,7 +50,7 @@ const UpdatePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Submit the updated data
-    fetch(`/api/items/${id}`, {
+    fetch(`http://localhost:3001/api/posts/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -81,7 +84,7 @@ const UpdatePage = () => {
         <TextField
           label="Address"
           name="address"
-          value={formData.address}
+          value={formData.adress}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
@@ -89,7 +92,7 @@ const UpdatePage = () => {
         <TextField
           label="City"
           name="city"
-          value={formData.city}
+          value={formData.ville}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
@@ -106,6 +109,47 @@ const UpdatePage = () => {
           label="Status"
           name="status"
           value={formData.status}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Latitude"
+          name="lat"
+          value={formData.lat}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Longitude"
+          name="lon"
+          value={formData.lon}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Prix"
+          name="prix"
+          value={formData.prix}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Prix"
+          name="prix"
+          value={formData.prix}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Type"
+          typ
+          name="type"
+          value={formData.type}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
