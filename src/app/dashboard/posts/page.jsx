@@ -17,13 +17,16 @@ import { DataContext } from '@/contexts/post';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { MdAddCard } from "react-icons/md";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import AddOrderDialog from '../OrderDialog';
+
 const DataTable = () => {
   const { data, loading, error } = useContext(DataContext);
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false); // State for AddOrderDialog
+  const [selectedPostId, setSelectedPostId] = useState(""); // State for selected postId
 
   useEffect(() => {
     setMounted(true);
@@ -72,6 +75,11 @@ const DataTable = () => {
     router.push(`/dashboard/detail/${id}`);
   };
 
+  const handleAddOrder = (postId) => {
+    setSelectedPostId(postId);
+    setDialogOpen(true);
+  };
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'available':
@@ -106,9 +114,6 @@ const DataTable = () => {
   return (
     <>
       <div style={{ textAlign: 'right', marginBottom: "10px" }}>
-      {/* <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
-            Add
-          </Button> */}
         <Link href="/dashboard/insert" passHref>
           <Button variant="contained">Add <FaPlus style={{ marginLeft: "2px" }} /></Button>
         </Link>
@@ -135,16 +140,20 @@ const DataTable = () => {
                   <TableCell>{row.ville}</TableCell>
                   <TableCell>{row.category?.name || 'N/A'}</TableCell>
                   <TableCell>{getStatusIcon(row.status)}</TableCell>
-                  <TableCell  style={{color:'#1e90ff'}}><MdAddCard fontSize={25}/></TableCell>
-                  <TableCell >
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                  <TableCell style={{ color: '#1e90ff' }}>
+                    <IconButton onClick={() => handleAddOrder(row.id)}>
+                      <MdAddCard fontSize={25} />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
                       <IconButton onClick={() => handleDetail(row.id)}>
                         <InfoIcon />
                       </IconButton>
                       <IconButton onClick={() => handleUpdate(row.id)} color="primary">
                         <EditIcon />
                       </IconButton>
-                      <IconButton onClick={() => handleClickOpen(row.id)} style={{ color: "red" }}>
+                      <IconButton onClick={() => handleClickOpen(row.id)} style={{ color: 'red' }}>
                         <DeleteIcon />
                       </IconButton>
                     </div>
@@ -153,7 +162,7 @@ const DataTable = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6}>No data available</TableCell>
+                <TableCell colSpan={7}>No data available</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -181,6 +190,13 @@ const DataTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <AddOrderDialog 
+  open={dialogOpen} 
+  onClose={() => setDialogOpen(false)} 
+  selectedPostId={selectedPostId || undefined} 
+/>
+
     </>
   );
 };

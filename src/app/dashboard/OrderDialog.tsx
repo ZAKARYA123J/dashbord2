@@ -1,23 +1,32 @@
-"use client"
-import React, { useState, ChangeEvent, useContext } from 'react';
+import React, { useState, useEffect, ChangeEvent, useContext } from 'react';
 import { Select, MenuItem, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 import { DataContext } from '@/contexts/post';
 
 interface AddOrderDialogProps {
   open: boolean;
   onClose: () => void;
+  selectedPostId?: string; // Optional prop to accept postId from another component
 }
 
-const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
+const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, selectedPostId }) => {
   const [newCustomer, setNewCustomer] = useState({
     fullName: '',
     dateDebut: '',
     dateFine: '',
     price: '',
     CIN: '',
-    postId: ''
+    postId: selectedPostId || '' // Initialize with selectedPostId if provided
   });
   const { data } = useContext(DataContext);
+
+  useEffect(() => {
+    if (selectedPostId) {
+      setNewCustomer(prevState => ({
+        ...prevState,
+        postId: selectedPostId
+      }));
+    }
+  }, [selectedPostId]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewCustomer({
@@ -51,6 +60,11 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
       console.error('Error saving order:', error);
     }
   };
+
+  // Filter data to show only the selected post if selectedPostId exists
+  const filteredData = selectedPostId
+    ? data.filter(item => item.id === selectedPostId)
+    : data.filter(item => item.status !== 'unavailable' && item.status !== 'taken');
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -114,16 +128,14 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
           value={newCustomer.postId}
           onChange={handlePostChange}
         >
-          {data
-            .filter((item) => item.status !== 'unavailable' && item.status !== 'taken')
-            .map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.title}
-                <span style={{ color: 'red', marginLeft: '10px' }}>
-                  {item.status} {item.category.name}
-                </span>
-              </MenuItem>
-            ))}
+          {filteredData.map((item) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.title}
+              <span style={{ color: 'red', marginLeft: '10px' }}>
+                {item.status} {item.category.name}
+              </span>
+            </MenuItem>
+          ))}
         </Select>
       </DialogContent>
       <DialogActions>
