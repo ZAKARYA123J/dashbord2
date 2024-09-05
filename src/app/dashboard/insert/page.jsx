@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Alert } from '@mui/material';
-
+import React, { useState, useEffect, useContext } from 'react';
+import { TextField, Button, Typography, Container, Box, Alert, MenuItem, Select, InputLabel, FormControl,  Grid, Card, CardMedia } from '@mui/material';
+import { DataContext } from '@/contexts/post';
 const CreatePostForm = () => {
   const [formData, setFormData] = useState({
     datePost: '',
@@ -19,6 +19,10 @@ const CreatePostForm = () => {
 
   const [response, setResponse] = useState(null);
   const [errors, setErrors] = useState(null);
+const {category,type}=useContext(DataContext)
+const [imageCount, setImageCount] = useState(0); 
+  
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +34,7 @@ const CreatePostForm = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
+    setImageCount(files.length);
     // Convert each file to a base64 string
     Promise.all(files.map(file => {
       return new Promise((resolve, reject) => {
@@ -79,37 +83,18 @@ const CreatePostForm = () => {
       setErrors({ error: 'An error occurred while creating the post' });
     }
   };
-//   "img": [
-//     "https://res.cloudinary.com/dab60xyhf/image/upload/v1725353080/your_folder_name/wesp3fkez0xshlqpkum5.png",
-//     "https://res.cloudinary.com/dab60xyhf/image/upload/v1725353080/your_folder_name/hazulihbeydh1e6krbwk.png"
-// ],
-// "datePost": "31-08-2024",
-// "lat": 40.712776,
-// "lon": -74.005974,
-// "prix": 150,
-// "adress": "123 Example St",
-// "ville": "New York",
-// "status": "taken",
-// "title": "Sample Post Title",
-// "categoryId": 1,
-// "typeId": 1,
-// "category": {
-//     "id": 1,
-//     "name": "Vente"
-// },
-// "type": {
-//     "id": 1,
-//     "type": "Home"
-//         }}
+
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" component="h1" gutterBottom>
         Create Post
       </Typography>
-      {errors && <Alert severity="error">{JSON.stringify(errors)}</Alert>}
-      {response && <Alert severity="success">{JSON.stringify(response)}</Alert>}
+      {errors && <Alert severity="error">ERROR</Alert>}
+      {response && <Alert severity="success">Succes</Alert>}
 
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
         <TextField
           margin="normal"
           required
@@ -121,6 +106,9 @@ const CreatePostForm = () => {
           onChange={handleChange}
           InputLabelProps={{ shrink: true }}
         />
+        </Grid>
+        <Grid item xs={6}>
+      
         <TextField
           margin="normal"
           required
@@ -131,6 +119,10 @@ const CreatePostForm = () => {
           value={formData.lat}
           onChange={handleChange}
         />
+        </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
         <TextField
           margin="normal"
           required
@@ -141,6 +133,8 @@ const CreatePostForm = () => {
           value={formData.lon}
           onChange={handleChange}
         />
+        </Grid>
+        <Grid item xs={6}>
         <TextField
           margin="normal"
           required
@@ -151,6 +145,10 @@ const CreatePostForm = () => {
           value={formData.prix}
           onChange={handleChange}
         />
+        </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
         <TextField
           margin="normal"
           required
@@ -160,6 +158,8 @@ const CreatePostForm = () => {
           value={formData.adress}
           onChange={handleChange}
         />
+        </Grid>
+        <Grid item xs={6}>
         <TextField
           margin="normal"
           required
@@ -169,15 +169,23 @@ const CreatePostForm = () => {
           value={formData.ville}
           onChange={handleChange}
         />
-        <TextField
-          margin="normal"
+        </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+         <InputLabel>Status</InputLabel>
+          <Select   margin="normal"
           required
           fullWidth
           name="status"
-          label="Status"
           value={formData.status}
           onChange={handleChange}
-        />
+          >
+            <MenuItem value="available">available</MenuItem>
+            <MenuItem value="unavailable">unavailable</MenuItem>
+          </Select>
+          </Grid>
+          <Grid item xs={6}>
         <TextField
           margin="normal"
           required
@@ -187,26 +195,44 @@ const CreatePostForm = () => {
           value={formData.title}
           onChange={handleChange}
         />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          type="number"
-          name="categoryId"
-          label="Category ID"
-          value={formData.categoryId}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          type="number"
-          name="typeId"
-          label="Type ID"
-          value={formData.typeId}
-          onChange={handleChange}
-        />
+        </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Category</InputLabel>
+          <Select
+            name="categoryId"
+            value={formData.categoryId}
+            onChange={handleChange}
+            label="Category"
+          >
+            {category.map(category => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Type</InputLabel>
+          <Select
+            name="typeId"
+            value={formData.typeId}
+            onChange={handleChange}
+            label="Type"
+          >
+            {type.map(type => (
+              <MenuItem key={type.id} value={type.id}>
+                {type.type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        </Grid>
+        </Grid>
         <Button
           variant="contained"
           component="label"
@@ -219,7 +245,21 @@ const CreatePostForm = () => {
             hidden
             onChange={handleImageChange}
           />
+
         </Button>
+        <Typography sx={{ mt: 2 }}>
+          {imageCount} image(s) selected.
+        </Typography>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          {formData.img.length > 0 &&
+            formData.img.map((image, index) => (
+              <Grid item xs={6} sm={4} key={index}>
+                <Card>
+                  <CardMedia component="img" height="140" image={image} alt={`Selected image ${index + 1}`} />
+                </Card>
+              </Grid>
+            ))}
+        </Grid>
         <Button
           type="submit"
           fullWidth

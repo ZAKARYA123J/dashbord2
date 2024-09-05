@@ -7,10 +7,37 @@ export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [order, setOrders] = useState([]);
+  const [category,setCategories]=useState([])
+  const [type,setTypes]=useState([])
+  const [detail,setDetail]=useState([])
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch data on component mount
+  // Fetch data on component moun
+  useEffect(()=>{
+    const fetchCategorie=async()=>{
+      try{
+        const response =await axios.get('http://localhost:3001/api/categories')
+        setCategories(response.data)
+      }catch (error) {
+        handleError(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCategorie()
+  },[])
+  useEffect(()=>{
+const fetchtype=async()=>{
+  try{
+const response=await axios.get('http://localhost:3001/api/types')
+setTypes(response.data)
+  }catch(error){
+ console.log('error')
+  }
+}
+fetchtype()
+  },[])
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,6 +53,20 @@ export const DataProvider = ({ children }) => {
     fetchData();
   }, []);
 
+  useEffect(()=>{
+    const fetchDeetail=async()=>{
+      setLoading(true)
+      try{
+        const response=await axios.get('http://localhost:3001/api/details')
+        setDetail(response.data)
+      }catch(error){
+        handleError(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDeetail()
+  },[])
   // Fetch orders on component mount
   useEffect(() => {
     const fetchOrders = async () => {
@@ -141,7 +182,10 @@ export const DataProvider = ({ children }) => {
       value={{
         data,
         order, // Provide orders state
+        category,
+        type,
         loading,
+        detail,
         error,
         createData,
         updateData,

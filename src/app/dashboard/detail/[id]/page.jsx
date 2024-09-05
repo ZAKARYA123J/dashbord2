@@ -34,17 +34,16 @@ const DetailForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch('http://localhost:3001/api/details', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(detail),
-        mode: 'no-cors'
+        body: JSON.stringify(detail)
       });
-
+  
       if (response.ok) {
         alert('Property details submitted successfully!');
         setDetail({
@@ -68,19 +67,21 @@ const DetailForm = () => {
       } else {
         const errorText = await response.text();
         console.error('Server response:', errorText);
-        alert('Failed to submit property details.');
+        alert('Failed to submit property details: ' + errorText);
       }
     } catch (error) {
       console.error('Error submitting property details:', error);
       alert('An error occurred while submitting the property details.');
     }
   };
+  
 
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom>
         Property Details
       </Typography>
+    
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           {[

@@ -50,7 +50,7 @@ export function CompaniesFilters(): React.JSX.Element {
   }
 
   return (
-    <Card sx={{ p: 2 }}>
+    <Card >
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -68,15 +68,16 @@ export function CompaniesFilters(): React.JSX.Element {
             {order.map((order: Order) => (
               <TableRow key={order.id}>
                 <TableCell component="th" scope="row">
-                  {order.id}
+                ORD-{order.id}
                 </TableCell>
                 <TableCell align="right">{order.fullName}</TableCell>
                 <TableCell align="right">{new Date(order.dateDebut).toLocaleDateString()}</TableCell>
                 <TableCell align="right">{order.dateFine}</TableCell>
                 <TableCell align="right">{order.CIN}</TableCell>
-                <TableCell align="right">{order.price}</TableCell>
+                <TableCell align="right">{order.price}DH</TableCell>
                 <TableCell align="right">
                   {order.post ? order.post.title : 'No Post Available'}
+                  
                 </TableCell>
               </TableRow>
             ))}

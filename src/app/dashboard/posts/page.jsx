@@ -15,7 +15,6 @@ import { FaPlus } from "react-icons/fa";
 import Link from 'next/link';
 import { DataContext } from '@/contexts/post';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { MdAddCard } from "react-icons/md";
 import AddOrderDialog from '../OrderDialog';
 
@@ -66,14 +65,21 @@ const DataTable = () => {
       console.error('Failed to delete item:', error);
     }
   };
-
   const handleUpdate = (id) => {
     router.push(`/dashboard/update/${id}`);
   };
 
-  const handleDetail = (id) => {
-    router.push(`/dashboard/detail/${id}`);
+  const handleDetail = (id, Detail) => {
+    if (Detail) {
+      // If the detail exists, redirect to the show page
+      router.push(`/dashboard/show/${id}`);
+    } else {
+      // If the detail does not exist, redirect to the create page
+      router.push(`/dashboard/detail/${id}`);
+    }
   };
+  
+
 
   const handleAddOrder = (postId) => {
     setSelectedPostId(postId);
@@ -140,16 +146,22 @@ const DataTable = () => {
                   <TableCell>{row.ville}</TableCell>
                   <TableCell>{row.category?.name || 'N/A'}</TableCell>
                   <TableCell>{getStatusIcon(row.status)}</TableCell>
-                  <TableCell style={{ color: '#1e90ff' }}>
-                    <IconButton onClick={() => handleAddOrder(row.id)}>
-                      <MdAddCard fontSize={25} />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
+                  <TableCell >
+  {row.DateReserve ? (
+    <span style={{ color: 'black' }}>ordered</span>
+  ) : (
+    <IconButton onClick={() => handleAddOrder(row.id)}>
+      <MdAddCard fontSize={25} style={{color:"#1e90ff"}} />
+    </IconButton>
+  )}
+</TableCell>
+
+                  <TableCell >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <IconButton onClick={() => handleDetail(row.id)}>
-                        <InfoIcon />
-                      </IconButton>
+                    <IconButton onClick={() => handleDetail(row.id, row.Detail)}>
+  <InfoIcon />
+</IconButton>
+
                       <IconButton onClick={() => handleUpdate(row.id)} color="primary">
                         <EditIcon />
                       </IconButton>

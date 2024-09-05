@@ -115,6 +115,7 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, selected
           margin="dense"
           label="price"
           name="price"
+          type='number'
           fullWidth
           variant="outlined"
           value={newCustomer.price}
